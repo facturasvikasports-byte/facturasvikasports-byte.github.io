@@ -380,7 +380,8 @@ def main():
         cmd += ["-f", "lavfi", "-i", f"anullsrc=r=48000:cl=stereo"]
         af = f"[1:a]atrim=duration={total:.3f}[a]"
     cmd += ["-filter_complex", f"[0:v]{','.join(capas)}[v];{af}", "-map", "[v]", "-map", "[a]",
-            "-t", f"{total:.3f}", "-c:v", "libx264", "-preset", "slow", "-crf", "17", "-profile:v", "high",
+            "-t", f"{total:.3f}", "-c:v", "libx264", "-preset", "slow", "-crf", "18", "-maxrate", "20M",
+            "-bufsize", "40M", "-profile:v", "high",
             "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-movflags", "+faststart",
             a.salida]
     run(cmd)
