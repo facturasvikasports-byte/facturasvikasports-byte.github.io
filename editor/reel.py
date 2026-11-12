@@ -66,6 +66,7 @@ def limpiar(text):
 def text_filter(tmpdir, name, text, start, end, y, size, box=True):
     """drawtext con aparición 'pop' (fade in rápido)."""
     text = limpiar(text)
+    size = min(size, int(W * 0.82 / (0.66 * max(1, len(text)))))  # que nunca toque los bordes
     path = os.path.join(tmpdir, f"{name}.txt")
     with open(path, "w", encoding="utf-8") as f:
         f.write(text)
@@ -114,8 +115,10 @@ def main():
             cmd += ["-loop", "1", "-framerate", str(FPS), "-t", f"{seg:.3f}", "-i", path]
             frames = int(seg * FPS) + 1
             # Ken Burns: zoom lento hacia el centro
+            # alterna zoom in / zoom out para dar ritmo
+            z = ("min(zoom+0.0015,1.15)" if i % 2 == 0 else "if(eq(on,0),1.15,max(zoom-0.0015,1.0))")
             v = (f"[{i}:v]scale={W*2}:{H*2}:force_original_aspect_ratio=increase,crop={W*2}:{H*2},"
-                 f"zoompan=z='min(zoom+0.0012,1.12)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
+                 f"zoompan=z='{z}':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)'"
                  f":d={frames}:s={W}x{H}:fps={FPS}")
             audio_ok.append(False)
         else:
